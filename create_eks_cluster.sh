@@ -1,16 +1,24 @@
 #!/bin/bash
 
-# Cargar el nombre de la clave SSH desde el archivo
-source /home/ubuntu/ssh_key_name.txt
+# Reemplaza 'source' con '.' para cargar el archivo correctamente
+. /home/ubuntu/ssh_key_name.txt
 
+# Verifica que KEY_NAME esté definido
+if [ -z "$KEY_NAME" ]; then
+  echo "Error: No se pudo encontrar KEY_NAME en /home/ubuntu/ssh_key_name.txt"
+  exit 1
+fi
+
+# Crear el clúster EKS con la clave EC2 especificada
 eksctl create cluster \
---name eks-mundos-e \
---region us-east-1 \
---node-type t3.small \
---nodes 3 \
---with-oidc \
---ssh-access \
---ssh-public-key $KEY_NAME \
---managed \
---full-ecr-access \
---zones us-east-1a,us-east-1b,us-east-1c
+  --name eks-cluster \
+  --version 1.23 \
+  --region us-east-1 \
+  --nodegroup-name standard-workers \
+  --node-type t2.micro \
+  --nodes 2 \
+  --nodes-min 1 \
+  --nodes-max 3 \
+  --managed \
+  --ssh-access \
+  --ssh-public-key $KEY_NAME
