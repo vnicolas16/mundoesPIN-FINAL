@@ -8,7 +8,7 @@ export AWS_DEFAULT_REGION
 
 # Cargar el nombre de la clave SSH
 if [ -f /home/ubuntu/ssh_key_name.txt ]; then
-  . /home/ubuntu/ssh_key_name.txt
+  . /home/ubuntu/ssh_key_name.txt  # Usar punto en lugar de source
 else
   echo "Error: No se encontró el archivo /home/ubuntu/ssh_key_name.txt"
   exit 1
@@ -21,7 +21,7 @@ if [ -z "$KEY_NAME" ]; then
 fi
 
 # Verificar si la clave SSH existe en EC2
-if ! aws ec2 describe-key-pairs --key-names "$KEY_NAME" --region us-east-1 > /dev/null 2>&1; then
+if ! aws ec2 describe-key-pairs --region us-east-1 --key-names "$KEY_NAME" > /dev/null 2>&1; then
   echo "Error: La clave SSH $KEY_NAME no existe en EC2"
   exit 1
 fi
