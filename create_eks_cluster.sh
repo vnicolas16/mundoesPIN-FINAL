@@ -1,31 +1,13 @@
 #!/bin/bash
 
-# Establecer región por defecto
-AWS_REGION="us-east-1"
-export AWS_REGION
-AWS_DEFAULT_REGION="us-east-1"
-export AWS_DEFAULT_REGION
-
-# Cargar el nombre de la clave SSH
-if [ -f /home/ubuntu/ssh_key_name.txt ]; then
-  . /home/ubuntu/ssh_key_name.txt  # Usar punto en lugar de source
-else
-  echo "Error: No se encontró el archivo /home/ubuntu/ssh_key_name.txt"
-  exit 1
-fi
-
-# Verificar si KEY_NAME está vacío
-if [ -z "$KEY_NAME" ]; then
-  echo "Error: La clave SSH no está definida en /home/ubuntu/ssh_key_name.txt"
-  exit 1
-fi
-
-# Verificar si la clave SSH existe en EC2
-if ! aws ec2 describe-key-pairs --region us-east-1 --key-names "$KEY_NAME" > /dev/null 2>&1; then
-  echo "Error: La clave SSH $KEY_NAME no existe en EC2"
-  exit 1
-fi
-
-# Crear el clúster EKS
-echo "Creando el clúster EKS usando la clave SSH $KEY_NAME"
-eksctl create cluster --name my-eks-cluster --version 1.21 --region $AWS_REGION --nodegroup-name standard-workers --node-type t2.micro --nodes 2 --nodes-min 1 --nodes-max 3 --ssh-access --ssh-public-key $KEY_NAME --managed
+eksctl create cluster \ 
+--name eks-mundos-e \ 
+--region us-east-1 \ 
+--node-type t3.small \ 
+–nodes 3 \ 
+--with-oidc \ 
+--ssh-access \ 
+--ssh-public-key pin \ 
+--managed \ 
+--full-ecr-access \ 
+--zones us-east-1a,us-east-1b,us-east-1c 
