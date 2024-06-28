@@ -11,3 +11,6 @@ eksctl create cluster \
 --managed \
 --full-ecr-access \
 --zones us-east-1a,us-east-1b,us-east-1c
+
+# Configurar kubectl para usar el contexto correcto
+aws eks --region us-east-1 update-kubeconfig --name eks-mundos-e
